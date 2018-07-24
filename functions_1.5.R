@@ -83,40 +83,6 @@ pwr_BCDE <- function(itempars, n_repeats = 3000,
   
 }
 
-pwr_F <- function(itempars, n_repeats = 3000, 
-                  n_matrices = 8000, alpha = .05, 
-                  n_pers = 100, sd_pers = 2, item_pos = 2, 
-                  dev = .6, burnIn = 300, difficulty = "moderat", 
-                  step = 16, folder = ""){
-  # Itempars und personenpars aendern
-  half_length <- length(personenpars) / 2
-  groups <- c(rep(1, half_length), rep(0, half_length)) 
-  model <- sim.rasch(persons = personenpars, 
-                     items = itempars,
-                     seed = 123)
-  cols_sums <- colSums(model)
-  rows_sums <- rowSums(model) 
-  dif <- vector("numeric", length(cols_sums))
-  dif[item_pos] <- dev
-  mcmc <- vector("numeric", n_repeats)
-  path <- paste0(folder, "/",
-                 as.character(length(rows_sums)), "x",
-                 as.character(length(cols_sums)), "_",
-                 as.character(dev), ".csv")
-  mcmc <- replicate(n_repeats, 
-                    pwr_mcmc(mat = model, 
-                             group = groups,
-                             dif = dif,
-                             repetitions = n_matrices,
-                             alpha = alpha, 
-                             burn = burnIn,
-                             steps = step))
-  rio::export(data.frame(power = mcmc,
-                         method = rep(c("mcmc"), n_repeats)), path)
-  
-}
-
-
 ######################################
 # Exact: Konditionale Power Berechnung
 ######################################
